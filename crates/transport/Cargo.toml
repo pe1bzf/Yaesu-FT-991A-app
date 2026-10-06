@@ -1,0 +1,17 @@
+[package]
+name = "ft991a-transport"
+description = "Seriële verbinding met de FT-991A: berichten knippen, één vraag tegelijk, AI-meldingen doorgeven"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[features]
+default = ["serial"]
+# Zonder deze feature bouwt de crate zonder seriële poort (alleen simulator).
+serial = ["dep:serialport"]
+
+[dependencies]
+ft991a-cat.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+serialport = { version = "4.7", optional = true, features = ["usbportinfo-interface"] }

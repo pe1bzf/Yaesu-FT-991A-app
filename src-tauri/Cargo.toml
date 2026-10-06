@@ -1,0 +1,22 @@
+[package]
+name = "ft991a-app"
+description = "Desktop-app voor de Yaesu FT-991A"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+name = "ft991a_app_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+ft991a-cat.workspace = true
+ft991a-transport = { workspace = true, features = ["serial"] }
+ft991a-radio.workspace = true
+ft991a-sim.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tauri = { version = "2", features = [] }

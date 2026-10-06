@@ -1,0 +1,16 @@
+[package]
+name = "ft991a-radio"
+description = "Radio-service: houdt de toestand van de FT-991A bij en voert acties in de juiste volgorde uit"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+ft991a-cat.workspace = true
+ft991a-transport = { workspace = true, default-features = false }
+serde.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+ft991a-sim.workspace = true
+serde_json.workspace = true
