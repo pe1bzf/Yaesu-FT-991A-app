@@ -1,0 +1,9 @@
+[package]
+name = "ft991a-sim"
+description = "Nep-FT-991A: begrijpt dezelfde CAT-commando's, zodat de app zonder radio werkt"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+ft991a-cat.workspace = true

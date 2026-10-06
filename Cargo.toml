@@ -1,0 +1,17 @@
+[workspace]
+resolver = "2"
+members = ["crates/cat", "crates/transport", "crates/radio", "crates/sim", "src-tauri"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[workspace.dependencies]
+ft991a-cat = { path = "crates/cat" }
+ft991a-transport = { path = "crates/transport", default-features = false }
+ft991a-radio = { path = "crates/radio" }
+ft991a-sim = { path = "crates/sim" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
