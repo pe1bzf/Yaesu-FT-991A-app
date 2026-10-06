@@ -166,6 +166,18 @@ impl SimRadio {
                 s.if_shift = hz;
                 None
             }
+            Command::SwapVfo => {
+                std::mem::swap(&mut s.freq_a, &mut s.freq_b);
+                None
+            }
+            Command::CopyAToB => {
+                s.freq_b = s.freq_a;
+                None
+            }
+            Command::CopyBToA => {
+                s.freq_a = s.freq_b;
+                None
+            }
             Command::ReadInfo(vfo) => {
                 let freq = if vfo == Vfo::A { s.freq_a } else { s.freq_b };
                 Some(Response::Info(

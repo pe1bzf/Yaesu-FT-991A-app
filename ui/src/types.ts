@@ -36,6 +36,9 @@ export type Action =
   | { type: "set_width"; index: number }
   | { type: "set_narrow"; on: boolean }
   | { type: "set_if_shift"; hz: number }
+  | { type: "swap_vfo" }
+  | { type: "copy_a_to_b" }
+  | { type: "copy_b_to_a" }
   | { type: "refresh" };
 
 export interface PortInfo {

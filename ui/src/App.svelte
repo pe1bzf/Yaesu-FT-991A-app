@@ -128,6 +128,17 @@
   {#if radio}
     <div class="vfos">
       <Vfo vfo="A" hz={radio.freq_a} main disabled={!live} {send} />
+      <div class="vfo-ops" aria-label="VFO wisselen en kopiëren">
+        <button disabled={!live} onclick={() => send({ type: "swap_vfo" })} title="VFO-A en VFO-B verwisselen (A/B-toets)"
+          >A ⇄ B</button
+        >
+        <button disabled={!live} onclick={() => send({ type: "copy_a_to_b" })} title="VFO-A kopiëren naar VFO-B"
+          >A → B</button
+        >
+        <button disabled={!live} onclick={() => send({ type: "copy_b_to_a" })} title="VFO-B kopiëren naar VFO-A"
+          >B → A</button
+        >
+      </div>
       <Vfo vfo="B" hz={radio.freq_b} disabled={!live} {send} />
     </div>
 
@@ -192,6 +203,11 @@
   .vfos {
     display: grid;
     gap: 12px;
+  }
+  .vfo-ops {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
   }
   .columns {
     display: grid;

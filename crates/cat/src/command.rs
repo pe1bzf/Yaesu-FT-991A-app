@@ -33,6 +33,12 @@ pub enum Command {
     SetIfShift(i16),
     /// `IF;` (VFO-A) of `OI;` (VFO-B): statusregel
     ReadInfo(Vfo),
+    /// `SV;` VFO-A en VFO-B verwisselen (de A/B-toets).
+    SwapVfo,
+    /// `AB;` VFO-A kopiëren naar VFO-B (A=B).
+    CopyAToB,
+    /// `BA;` VFO-B kopiëren naar VFO-A.
+    CopyBToA,
 }
 
 fn freq_letters(vfo: Vfo) -> &'static str {
@@ -82,6 +88,9 @@ impl Command {
                 format!("IS0{sign}{:04}", hz.unsigned_abs())
             }
             Command::ReadInfo(vfo) => info_letters(vfo).to_string(),
+            Command::SwapVfo => "SV".to_string(),
+            Command::CopyAToB => "AB".to_string(),
+            Command::CopyBToA => "BA".to_string(),
         };
         Ok(format!("{body}{TERMINATOR}"))
     }
@@ -102,7 +111,10 @@ impl Command {
             | Command::SetMode(_)
             | Command::SetWidth(_)
             | Command::SetNarrow(_)
-            | Command::SetIfShift(_) => None,
+            | Command::SetIfShift(_)
+            | Command::SwapVfo
+            | Command::CopyAToB
+            | Command::CopyBToA => None,
         }
     }
 
@@ -147,6 +159,9 @@ impl Command {
             }
             "IF" if rest.is_empty() => Command::ReadInfo(Vfo::A),
             "OI" if rest.is_empty() => Command::ReadInfo(Vfo::B),
+            "SV" if rest.is_empty() => Command::SwapVfo,
+            "AB" if rest.is_empty() => Command::CopyAToB,
+            "BA" if rest.is_empty() => Command::CopyBToA,
             "MD" => match after_zero()? {
                 "" => Command::ReadMode,
                 code if code.len() == 1 => {
@@ -244,6 +259,9 @@ mod tests {
             Command::SetIfShift(-40),
             Command::ReadInfo(Vfo::A),
             Command::ReadInfo(Vfo::B),
+            Command::SwapVfo,
+            Command::CopyAToB,
+            Command::CopyBToA,
         ];
         for cmd in all {
             assert_eq!(Command::parse(&enc(cmd)), Ok(cmd), "{}", enc(cmd));

@@ -143,6 +143,12 @@ pub enum Action {
     SetIfShift {
         hz: i32,
     },
+    /// VFO-A en VFO-B verwisselen (de A/B-toets op de radio).
+    SwapVfo,
+    /// A=B: VFO-A kopiëren naar VFO-B.
+    CopyAToB,
+    /// VFO-B kopiëren naar VFO-A.
+    CopyBToA,
     /// Alles opnieuw uitlezen.
     Refresh,
 }
@@ -277,6 +283,9 @@ impl Radio {
                     .send(Command::SetIfShift(round_if_shift(hz)))?;
                 self.read(Command::ReadIfShift)
             }
+            Action::SwapVfo => self.vfo_operation(Command::SwapVfo),
+            Action::CopyAToB => self.vfo_operation(Command::CopyAToB),
+            Action::CopyBToA => self.vfo_operation(Command::CopyBToA),
             Action::Refresh => self.refresh(),
         }
     }
@@ -284,6 +293,13 @@ impl Radio {
     fn set_frequency(&self, vfo: Vfo, hz: u32) -> Result<(), RadioError> {
         self.transport.send(Command::SetFrequency(vfo, hz))?;
         self.read(Command::ReadFrequency(vfo))
+    }
+
+    /// Wisselen of kopiëren kan ook de mode van VFO-A veranderen, dus alles
+    /// opnieuw uitlezen.
+    fn vfo_operation(&self, cmd: Command) -> Result<(), RadioError> {
+        self.transport.send(cmd)?;
+        self.refresh()
     }
 
     fn refresh(&self) -> Result<(), RadioError> {
@@ -391,6 +407,24 @@ mod tests {
                 hz: 500_000_000
             })
             .is_err());
+    }
+
+    #[test]
+    fn swap_and_copy_vfos() {
+        let sim = SimRadio::new();
+        let (radio, _) = connect(&sim);
+        let s = radio.apply(Action::SwapVfo).unwrap();
+        assert_eq!((s.freq_a, s.freq_b), (7_074_000, 14_250_000));
+        let s = radio.apply(Action::CopyAToB).unwrap();
+        assert_eq!((s.freq_a, s.freq_b), (7_074_000, 7_074_000));
+        radio
+            .apply(Action::SetFrequency {
+                vfo: Vfo::B,
+                hz: 145_500_000,
+            })
+            .unwrap();
+        let s = radio.apply(Action::CopyBToA).unwrap();
+        assert_eq!(s.freq_a, 145_500_000);
     }
 
     #[test]
